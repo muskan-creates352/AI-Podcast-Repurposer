@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ 
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
+import Sidebar from "@/components/layout/Sidebar";
+import Header from "@/components/layout/Header";
 
 export const metadata: Metadata = {
   title: "AI Podcast Repurposer",
-  description: "Transform your podcast episodes into multiple content formats with AI",
+  description: "Transform your podcasts into multiple content formats",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
+      <body className="bg-zinc-950 text-zinc-50 flex min-h-screen">
+        <Sidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Header />
+          <main className="flex-1 overflow-auto p-6 md:p-8">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

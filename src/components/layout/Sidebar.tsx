@@ -1,111 +1,60 @@
-"use client";
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Home, Mic, Wand2, Library, BarChart2, Settings, Sparkles } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-import React from "react";
-import { 
-  Radio, 
-  LayoutDashboard, 
-  Mic, 
-  Sparkles, 
-  BarChart3, 
-  Settings, 
-  X
-} from "lucide-react";
+const navItems = [
+  { icon: Home, label: 'Dashboard', href: '/' },
+  { icon: Mic, label: 'Podcasts', href: '/podcasts' },
+  { icon: Wand2, label: 'Content Studio', href: '/studio' },
+  { icon: Library, label: 'Content Library', href: '/library' },
+  { icon: BarChart2, label: 'Analytics', href: '/analytics' },
+];
 
-interface SidebarProps {
-  currentPage: string;
-  onNavigate: (page: string) => void;
-  isOpen?: boolean;
-  onClose?: () => void;
-}
-
-export function Sidebar({ currentPage, onNavigate, isOpen, onClose }: SidebarProps) {
-  const navItems = [
-    { name: "Dashboard", id: "dashboard", icon: LayoutDashboard },
-    { name: "Podcasts", id: "podcasts", icon: Mic },
-    { name: "Create Content", id: "create-content", icon: Sparkles },
-    { name: "Analytics", id: "analytics", icon: BarChart3 },
-    { name: "Settings", id: "settings", icon: Settings },
-  ];
+export default function Sidebar() {
+  const pathname = usePathname();
 
   return (
-    <>
-      {/* Mobile backdrop */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={onClose}
-        />
-      )}
-
-      <div 
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-950 border-r border-gray-800 transform transition-transform duration-200 ease-in-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
-      >
-        {/* Mobile close button */}
-        {onClose && (
-          <button 
-            className="md:hidden absolute top-4 right-4 text-gray-400 hover:text-white"
-            onClick={onClose}
-          >
-            <X className="w-6 h-6" />
-          </button>
-        )}
-
-        {/* Logo area */}
-        <div className="flex items-center gap-3 px-6 py-8">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 shadow-lg shadow-purple-500/20">
-            <Radio className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-white leading-tight">AI Podcast</h1>
-            <span className="text-sm font-semibold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">Repurposer</span>
-          </div>
+    <aside className="w-64 border-r border-zinc-800/60 bg-[#000000] hidden md:flex flex-col h-screen sticky top-0">
+      <div className="h-16 flex items-center px-6 border-b border-zinc-800/60">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-violet-400" />
+          <h1 className="text-sm font-semibold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-violet-400">AI Repurposer</h1>
         </div>
+      </div>
 
-        <div className="px-4 mb-4">
-          <div className="h-px bg-gray-800/50 w-full" />
-        </div>
-
-        {/* Nav items */}
-        <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
+      <div className="p-4">
+        <p className="px-3 text-xs font-medium text-zinc-500 mb-2 uppercase tracking-wider">Workspace</p>
+        <nav className="space-y-0.5">
           {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentPage === item.id;
-            
+            const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
             return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  onNavigate(item.id);
-                  if (window.innerWidth < 768 && onClose) {
-                    onClose();
-                  }
-                }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive 
-                    ? "bg-gradient-to-r from-purple-500/20 to-indigo-500/20 border-l-2 border-purple-500 text-white" 
-                    : "text-gray-400 hover:text-white hover:bg-gray-800/50 border-l-2 border-transparent"
-                }`}
-              >
-                <Icon className={`w-5 h-5 ${isActive ? "text-purple-400" : "text-gray-500"}`} />
-                {item.name}
-              </button>
+              <Link key={item.href} href={item.href} 
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md transition-all text-sm font-medium",
+                  active ? "bg-violet-500/15 text-violet-300" : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50"
+                )}>
+                <item.icon className="w-4 h-4" />
+                {item.label}
+              </Link>
             );
           })}
         </nav>
+      </div>
 
-        {/* User profile section */}
-        <div className="p-4 border-t border-gray-800/50">
-          <div className="flex items-center gap-3 px-2">
-            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-gray-800 to-gray-700 text-sm font-bold text-gray-200 shadow-inner border border-gray-600">
-              MU
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-medium text-white">Muskan</span>
-              <span className="text-xs text-gray-400">Creator</span>
-            </div>
+      <div className="mt-auto p-4 border-t border-zinc-800/60">
+        <Link href="/settings" className="flex items-center gap-3 px-3 py-2 rounded-md transition-all text-sm font-medium text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50 mb-4">
+          <Settings className="w-4 h-4" /> Settings
+        </Link>
+        <div className="flex items-center gap-3 px-3 py-2 rounded-md bg-zinc-900/40 border border-zinc-800/50">
+          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-medium text-zinc-300 border border-zinc-700">M</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-zinc-200 truncate">Muskan</p>
+            <p className="text-xs text-zinc-500 truncate">Creator Plan</p>
           </div>
         </div>
       </div>
-    </>
+    </aside>
   );
 }
